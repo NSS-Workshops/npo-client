@@ -12,7 +12,7 @@ export default function Page() {
                 <Button 
                     className="mt-2 flex justify-center"
                     
-                >Login with Github</Button>
+                >Log In</Button>
             </div>
         </main>
     )

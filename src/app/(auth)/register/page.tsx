@@ -11,9 +11,8 @@ export default function RegisterPage() {
     const dispatch = useAppDispatch(); // Use Redux dispatch to update global state
     const user = useAppSelector((state) => state.user); // Access global user state from Redux
 
-    // Local state for password and organization name (if applicable)
+    // Local state for password
     const [password, setPassword] = useState<string>('');
-    const [organization, setOrganization] = useState<string>('');  // Organization name input for org users
     const [error, setError] = useState<string>('');
 
     const handleRegister = async (e: React.FormEvent) => {
@@ -21,20 +20,15 @@ export default function RegisterPage() {
         setError('');
 
         try {
-            // Prepare the user data object
-            const userData: any = {
+            // Prepare the user data to send to the backend
+            const userData = {
                 username: user.username,
                 email: user.email,
                 first_name: user.first_name,
                 last_name: user.last_name,
-                password,
-                groups: [user.group === 'Developer' ? 1 : 2]  // Map group to corresponding ID (1 for Developer, 2 for Organization User)
+                password,  // Password is stored locally, not in Redux
+                groups: [user.group === 'Organization User' ? 2 : 1],  // Use IDs for groups, assuming 1 = Developer, 2 = Organization User
             };
-
-            // Conditionally add the organization field if the user is an Organization User
-            if (user.group === 'Organization User') {
-                userData.organization = organization;  // Only include organization for org users
-            }
 
             // Send the form data to your backend's register endpoint
             const response = await fetch('http://localhost:8000/users/', {
@@ -64,9 +58,9 @@ export default function RegisterPage() {
 
             // Redirect based on group
             if (user.group === 'Organization User') {
-                router.push('/create-organization');  // Redirect to create organization page for org users
+                router.push('/organization');  // Redirect to create organization page for org users
             } else {
-                router.push('/dashboard');  // Redirect developers to dashboard
+                router.push('/project-list');  // Redirect developers to dashboard
             }
         } catch (err) {
             console.error('Registration error:', err);
@@ -141,18 +135,6 @@ export default function RegisterPage() {
                         <option value="Organization User">Organization User</option>
                     </select>
                 </div>
-
-                {/* Organization Name */}
-                {user.group === 'Organization User' && (
-                    <input
-                        type="text"
-                        value={organization}
-                        onChange={(e) => setOrganization(e.target.value)}  
-                        placeholder="Organization Name"
-                        className="w-full p-3 border border-gray-300 rounded-lg"
-                        required
-                    />
-                )}
 
                 {/* Submit Button */}
                 <Button type="submit" className="w-full py-3 bg-blue-600 text-white rounded-lg">

@@ -3,27 +3,71 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setOrganization } from '../../store/organizationSlice';  // Import the setOrganization action
+import { RootState } from '../../store/store';
 
-export default function CreateOrganizationPage() {
+export default function CreateOrganization() {
     const router = useRouter();
-    const [organizationName, setOrganizationName] = useState<string>('');
-    const [organizationDescription, setOrganizationDescription] = useState<string>('');
+    const dispatch = useAppDispatch();
+
+    // Access the logged-in user and organization from Redux
+    const user = useAppSelector((state: RootState) => state.user);
+    const organization = useAppSelector((state: RootState) => state.organization);
+
+    // Local error state
     const [error, setError] = useState<string>('');
 
+    // Fetch auth token from cookies
+    const getAuthTokenFromCookies = (): string | null => {
+        const authToken = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('auth_token='))
+            ?.split('=')[1];
+        return authToken || null;
+    };
+
+    // Handle input changes and update the Redux store
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+        const value = e.target.value;
+        dispatch(setOrganization({ ...organization, [field]: value }));
+    };
+
+    // Handle form submission
     const handleCreateOrganization = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
+        const authToken = getAuthTokenFromCookies();
+
+        if (!authToken) {
+            setError('Authentication token not found. Please log in.');
+            return;
+        }
+
+        if (!user || !user.id) {
+            setError('User is not logged in or user ID is missing.');
+            return;
+        }
+
         try {
+            // Prepare the organization data including the user ID
+            const organizationData = {
+                name: organization.name,
+                website: organization.website,
+                address: organization.address,
+                city: organization.city,
+                state: organization.state,
+                user: user.id,  // Attach the logged-in user's ID
+            };
+
             const response = await fetch('http://localhost:8000/organizations/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Token ${authToken}`,  // Send token for authentication
                 },
-                body: JSON.stringify({
-                    name: organizationName,
-                    description: organizationDescription,
-                }),
+                body: JSON.stringify(organizationData),
             });
 
             if (!response.ok) {
@@ -32,8 +76,21 @@ export default function CreateOrganizationPage() {
                 return;
             }
 
-            // Redirect to the organization dashboard or homepage after creation
-            router.push('/dashboard');  // Change this path according to your needs
+            const data = await response.json();
+
+            // Dispatch the created organization data to Redux, including the user ID
+            dispatch(setOrganization({
+                id: data.id,
+                name: data.name,
+                website: data.website,
+                address: data.address,
+                city: data.city,
+                state: data.state,
+                user: data.user,  // User ID attached to the organization
+            }));
+
+            // Redirect after successful organization creation
+            router.push('/project-list');
         } catch (err) {
             console.error('Organization creation error:', err);
             setError('An unexpected error occurred.');
@@ -42,25 +99,56 @@ export default function CreateOrganizationPage() {
 
     return (
         <main className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-            <h1 className="text-3xl font-bold text-center mb-6">Create Organization</h1>
+            <h1 className="text-3xl font-bold text-center mb-6">Create Your Organization</h1>
             {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
             <form onSubmit={handleCreateOrganization} className="space-y-4">
                 {/* Organization Name */}
                 <input
                     type="text"
-                    value={organizationName}
-                    onChange={(e) => setOrganizationName(e.target.value)}
+                    value={organization.name}
+                    onChange={(e) => handleInputChange(e, 'name')}
                     placeholder="Organization Name"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                    className="w-full p-3 border border-gray-300 rounded-lg"
                     required
                 />
 
-                {/* Organization Description */}
-                <textarea
-                    value={organizationDescription}
-                    onChange={(e) => setOrganizationDescription(e.target.value)}
-                    placeholder="Organization Description"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                {/* Website */}
+                <input
+                    type="url"
+                    value={organization.website}
+                    onChange={(e) => handleInputChange(e, 'website')}
+                    placeholder="Website"
+                    className="w-full p-3 border border-gray-300 rounded-lg"
+                    required
+                />
+
+                {/* Address */}
+                <input
+                    type="text"
+                    value={organization.address}
+                    onChange={(e) => handleInputChange(e, 'address')}
+                    placeholder="Address"
+                    className="w-full p-3 border border-gray-300 rounded-lg"
+                    required
+                />
+
+                {/* City */}
+                <input
+                    type="text"
+                    value={organization.city}
+                    onChange={(e) => handleInputChange(e, 'city')}
+                    placeholder="City"
+                    className="w-full p-3 border border-gray-300 rounded-lg"
+                    required
+                />
+
+                {/* State */}
+                <input
+                    type="text"
+                    value={organization.state}
+                    onChange={(e) => handleInputChange(e, 'state')}
+                    placeholder="State"
+                    className="w-full p-3 border border-gray-300 rounded-lg"
                     required
                 />
 
@@ -72,3 +160,4 @@ export default function CreateOrganizationPage() {
         </main>
     );
 }
+

@@ -3,10 +3,12 @@
 
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './userSlice'; // Import the user slice
+import organizationReducer from './organizationSlice';
 
 export const store = configureStore({
     reducer: {
         user: userReducer,  // Add user slice reducer
+        organization: organizationReducer,
     },
 });
 

@@ -1,9 +1,11 @@
+// src/store/userSlice.ts
 'use client';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Define a type for the user state
 interface UserState {
+  id: number | null;  // Add id to the state
   username: string;
   email: string;
   first_name: string;
@@ -14,6 +16,7 @@ interface UserState {
 
 // Define the initial state using that type
 const initialState: UserState = {
+  id: null,  // Initialize id as null
   username: '',
   email: '',
   first_name: '',
@@ -26,11 +29,12 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // Updated setUser to include group
+    // Updated setUser to include id and group
     setUser(
       state, 
-      action: PayloadAction<{ username: string; email: string; first_name: string; last_name: string; group: string }>
+      action: PayloadAction<{ id: number; username: string; email: string; first_name: string; last_name: string; group: string }>
     ) {
+      state.id = action.payload.id;  // Set user id
       state.username = action.payload.username;
       state.email = action.payload.email;
       state.first_name = action.payload.first_name;
@@ -39,6 +43,7 @@ const userSlice = createSlice({
       state.loggedIn = true;
     },
     logout(state) {
+      state.id = null;  // Clear id on logout
       state.username = '';
       state.email = '';
       state.first_name = '';

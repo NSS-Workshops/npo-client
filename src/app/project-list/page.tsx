@@ -1,72 +1,39 @@
-'use client'
+'use client';
 
-import { Button } from "../ui/button"
-import { useRouter } from "next/navigation"
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import { useSelector } from 'react-redux';  // Import useSelector to access the Redux store
+import { RootState } from '../../store/store';  // Import the RootState type if using TypeScript
 
-export default function Page() {
-    const router = useRouter()
+export default function ProjectDetailPage() {
+    const router = useRouter();
+
+    // Access the user slice from Redux store
+    const user = useSelector((state: RootState) => state.user);
+
     return (
         <main>
-            <h1 className="flex flex-col items-center justify-evenly p-24 text-3xl">Project List</h1>
-            <div className="flex flex-row flex-wrap items-start justify-evenly min-w-full min-h-screen border border-solid border-gray-400">
-                
+            {/* Display user information */}
+            <div className="text-center mb-6">
+                <h1 className="text-3xl font-bold">
+                    Welcome, {user.first_name} {user.last_name}!
+                </h1>
+                <p className="text-lg">
+                    Your email: {user.email}
+                </p>
+                <p className="text-md">
+                    Your group: {user.group}
+                </p>
+            </div>
+
+            {/* Project Detail Section */}
+            <div className="flex flex-col items-center justify-evenly p-24">
+                <h2 className="text-3xl font-bold">Project Details</h2>
                 <div className="m-10 border border-dotted p-8 min-w-max min-h-full">
-                    <h1>Project 1</h1>
-                    <p>Description of project 1, it is a great project etc etc</p>
-                </div>
-                <div className="m-10 border border-dotted p-8 min-w-max min-h-full">
-                    <h1>Project 1</h1>
-                    <p>Description of project 1, it is a great project etc etc</p>
-                </div>
-                <div className="m-10 border border-dotted p-8 min-w-max min-h-full">
-                    <h1>Project 1</h1>
-                    <p>Description of project 1, it is a great project etc etc</p>
-                </div>
-                <div className="m-10 border border-dotted p-8 min-w-max min-h-full">
-                    <h1>Project 1</h1>
-                    <p>Description of project 1, it is a great project etc etc</p>
-                </div>
-                <div className="m-10 border border-dotted p-8 min-w-max min-h-full">
-                    <h1>Project 1</h1>
-                    <p>Description of project 1, it is a great project etc etc</p>
-                </div>
-                <div className="m-10 border border-dotted p-8 min-w-max min-h-full">
-                    <h1>Project 1</h1>
-                    <p>Description of project 1, it is a great project etc etc</p>
-                </div>
-                <div className="m-10 border border-dotted p-8 min-w-max min-h-full">
-                    <h1>Project 1</h1>
-                    <p>Description of project 1, it is a great project etc etc</p>
-                </div>
-                <div className="m-10 border border-dotted p-8 min-w-max min-h-full">
-                    <h1>Project 1</h1>
-                    <p>Description of project 1, it is a great project etc etc</p>
+                    <h3>Project 1</h3>
+                    <p>Description of project 1, it is a great project, etc.</p>
                 </div>
             </div>
         </main>
-    )
-} 
-
-/* export default async function Page() {
-    return (
-      <main>
-        <h1 className={`mb-4 text-xl md:text-2xl`}>
-          Project List
-        </h1>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <Suspense fallback={<CardsSkeleton/>}>
-            <CardWrapper/>
-          </Suspense>
-        </div>
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-          <Suspense fallback={<RevenueChartSkeleton/>}>
-            <RevenueChart/>
-          </Suspense>
-          <Suspense fallback={<LatestInvoicesSkeleton/>}>
-            <LatestInvoices />
-          </Suspense>
-        </div>
-      </main>
     );
-  } */
-
+}

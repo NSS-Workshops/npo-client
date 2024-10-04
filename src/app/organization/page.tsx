@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setOrganization } from '../../store/organizationSlice';  // Import the setOrganization action
+import { setOrganization, updateOrgField } from '../../store/organizationSlice';  // Import the updateOrgField action
 import { RootState } from '../../store/store';
 
 export default function CreateOrganization() {
@@ -28,9 +28,9 @@ export default function CreateOrganization() {
     };
 
     // Handle input changes and update the Redux store
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-        const value = e.target.value;
-        dispatch(setOrganization({ ...organization, [field]: value }));
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        dispatch(updateOrgField({ field: name as keyof typeof organization, value })); // Dynamically update organization fields
     };
 
     // Handle form submission
@@ -90,7 +90,7 @@ export default function CreateOrganization() {
             }));
 
             // Redirect after successful organization creation
-            router.push('/project-list');
+            router.push(`/organization/${data.id}`);
         } catch (err) {
             console.error('Organization creation error:', err);
             setError('An unexpected error occurred.');
@@ -105,8 +105,9 @@ export default function CreateOrganization() {
                 {/* Organization Name */}
                 <input
                     type="text"
+                    name="name"  // Name matches Redux field
                     value={organization.name}
-                    onChange={(e) => handleInputChange(e, 'name')}
+                    onChange={handleInputChange}  // Dynamically update the field in Redux
                     placeholder="Organization Name"
                     className="w-full p-3 border border-gray-300 rounded-lg"
                     required
@@ -115,8 +116,9 @@ export default function CreateOrganization() {
                 {/* Website */}
                 <input
                     type="url"
+                    name="website"  // Name matches Redux field
                     value={organization.website}
-                    onChange={(e) => handleInputChange(e, 'website')}
+                    onChange={handleInputChange}  // Dynamically update the field in Redux
                     placeholder="Website"
                     className="w-full p-3 border border-gray-300 rounded-lg"
                     required
@@ -125,8 +127,9 @@ export default function CreateOrganization() {
                 {/* Address */}
                 <input
                     type="text"
+                    name="address"  // Name matches Redux field
                     value={organization.address}
-                    onChange={(e) => handleInputChange(e, 'address')}
+                    onChange={handleInputChange}  // Dynamically update the field in Redux
                     placeholder="Address"
                     className="w-full p-3 border border-gray-300 rounded-lg"
                     required
@@ -135,8 +138,9 @@ export default function CreateOrganization() {
                 {/* City */}
                 <input
                     type="text"
+                    name="city"  // Name matches Redux field
                     value={organization.city}
-                    onChange={(e) => handleInputChange(e, 'city')}
+                    onChange={handleInputChange}  // Dynamically update the field in Redux
                     placeholder="City"
                     className="w-full p-3 border border-gray-300 rounded-lg"
                     required
@@ -145,8 +149,9 @@ export default function CreateOrganization() {
                 {/* State */}
                 <input
                     type="text"
+                    name="state"  // Name matches Redux field
                     value={organization.state}
-                    onChange={(e) => handleInputChange(e, 'state')}
+                    onChange={handleInputChange}  // Dynamically update the field in Redux
                     placeholder="State"
                     className="w-full p-3 border border-gray-300 rounded-lg"
                     required
@@ -160,4 +165,3 @@ export default function CreateOrganization() {
         </main>
     );
 }
-

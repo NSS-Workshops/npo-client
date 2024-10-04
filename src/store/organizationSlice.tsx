@@ -28,10 +28,14 @@ const organizationSlice = createSlice({
         setOrganization: (state, action: PayloadAction<OrganizationState>) => {
             return { ...action.payload };  // Set the organization state to the payload
         },
+        // New reducer for dynamically updating organization fields
+        updateOrgField: (state, action: PayloadAction<{ field: keyof OrganizationState; value: string }>) => {
+            state[action.payload.field] = action.payload.value;
+        },
         clearOrganization: () => initialState,  // Reset to initial state
     },
 });
 
 // Export the actions and reducer
-export const { setOrganization, clearOrganization } = organizationSlice.actions;
+export const { setOrganization, updateOrgField, clearOrganization } = organizationSlice.actions;
 export default organizationSlice.reducer;

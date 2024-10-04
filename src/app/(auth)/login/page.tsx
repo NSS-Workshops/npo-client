@@ -2,16 +2,16 @@
 
 import React, { useState } from 'react';
 import { Button } from '../../ui/button';
-import { useAppDispatch } from '../../../store/hooks';
-import { setUser } from '../../../store/userSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'; // Import useAppSelector to access user state
+import { updateUserField, setUser } from '../../../store/userSlice'; // Import updateUserField and setUser actions
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const user = useAppSelector((state) => state.user); // Access global user state from Redux
 
-  // Local state to store the form data
-  const [username, setUsername] = useState<string>(''); 
+  // Local state to store the password
   const [password, setPassword] = useState<string>(''); 
   const [error, setError] = useState<string>(''); 
 
@@ -27,8 +27,8 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username,
-          password, // Send user credentials
+          username: user.username, // Get the username from Redux state
+          password, // Send the password from local state
         }),
       });
 
@@ -50,7 +50,7 @@ export default function LoginPage() {
         email: data.user.email,
         first_name: data.user.first_name,
         last_name: data.user.last_name,
-        group: data.user.groups[0],  // Assuming it's a single group, you can adjust accordingly
+        group: data.user.groups[0],  // Assuming it's a single group
       }));
 
       // Clear password from local state after successful login
@@ -70,6 +70,13 @@ export default function LoginPage() {
     }
   };
 
+  // Handle input changes for the username field
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    // Dynamically update the username in Redux state using the updateUserField action
+    dispatch(updateUserField({ field: name as keyof typeof user, value }));
+  };
+
   return (
     <main className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
@@ -79,8 +86,9 @@ export default function LoginPage() {
         {/* Username */}
         <input
           type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          name="username" // Add name attribute for Redux state updates
+          value={user.username}
+          onChange={handleInputChange}  // Update Redux state for username
           placeholder="Username"
           className="w-full p-3 border border-gray-300 rounded-lg"
           required
@@ -90,7 +98,7 @@ export default function LoginPage() {
         <input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}  // Locally managed password
           placeholder="Password"
           className="w-full p-3 border border-gray-300 rounded-lg"
           required

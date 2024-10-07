@@ -79,7 +79,7 @@ export default function LoginPage() {
 
   return (
     <main className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
+      <h1 className="text-3xl font-bold text-black text-center mb-6">Login</h1>
       {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
       <form onSubmit={handleLogin} className="space-y-4">
         
@@ -90,7 +90,7 @@ export default function LoginPage() {
           value={user.username}
           onChange={handleInputChange}  // Update Redux state for username
           placeholder="Username"
-          className="w-full p-3 border border-gray-300 rounded-lg"
+          className="w-full p-3 border text-black border-gray-300 rounded-lg"
           required
         />
 
@@ -100,7 +100,7 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}  // Locally managed password
           placeholder="Password"
-          className="w-full p-3 border border-gray-300 rounded-lg"
+          className="w-full p-3 border text-black border-gray-300 rounded-lg"
           required
         />
 

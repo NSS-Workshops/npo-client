@@ -108,7 +108,7 @@ export default function RegisterPage() {
 
     return (
         <main className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-            <h1 className="text-3xl font-bold text-center mb-6">Register</h1>
+            <h1 className="text-3xl font-bold text-black text-center mb-6">Register</h1>
             {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
             <form onSubmit={handleRegister} className="space-y-4">
                 {/* Username */}
@@ -118,7 +118,7 @@ export default function RegisterPage() {
                     value={user.username}
                     onChange={handleInputChange}
                     placeholder="Username"
-                    className="w-full p-3 border border-gray-300 rounded-lg"
+                    className="w-full p-3 border text-black border-gray-300 rounded-lg"
                     required
                 />
 
@@ -129,7 +129,7 @@ export default function RegisterPage() {
                     value={user.email}
                     onChange={handleInputChange}
                     placeholder="Email"
-                    className="w-full p-3 border border-gray-300 rounded-lg"
+                    className="w-full p-3 border text-black border-gray-300 rounded-lg"
                     required
                 />
 
@@ -140,7 +140,7 @@ export default function RegisterPage() {
                     value={user.first_name}
                     onChange={handleInputChange}
                     placeholder="First Name"
-                    className="w-full p-3 border border-gray-300 rounded-lg"
+                    className="w-full p-3 border text-black border-gray-300 rounded-lg"
                     required
                 />
 
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                     value={user.last_name}
                     onChange={handleInputChange}
                     placeholder="Last Name"
-                    className="w-full p-3 border border-gray-300 rounded-lg"
+                    className="w-full p-3 border text-black border-gray-300 rounded-lg"
                     required
                 />
 
@@ -161,7 +161,7 @@ export default function RegisterPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}  // Locally managed password
                     placeholder="Password"
-                    className="w-full p-3 border border-gray-300 rounded-lg"
+                    className="w-full p-3 border text-black border-gray-300 rounded-lg"
                     required
                 />
 
@@ -172,7 +172,7 @@ export default function RegisterPage() {
                         name="group"  // Add name attribute for dynamic updates
                         value={user.group}
                         onChange={handleInputChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg"
+                        className="w-full p-3 border text-black border-gray-300 rounded-lg"
                     >
                         <option value="Developer">Developer</option>
                         <option value="Organization User">Organization User</option>

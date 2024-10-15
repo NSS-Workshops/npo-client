@@ -5,6 +5,7 @@ import { Button } from '../../ui/button';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'; // Import useAppSelector to access user state
 import { updateUserField, setUser } from '../../../store/userSlice'; // Import updateUserField and setUser actions
 import { useRouter } from 'next/navigation';
+import { setOrganization } from '@/store/organizationSlice';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -50,20 +51,28 @@ export default function LoginPage() {
         email: data.user.email,
         first_name: data.user.first_name,
         last_name: data.user.last_name,
-        group: data.user.groups[0],  // Assuming it's a single group
+        group: data.user.groups[0],  // Assuming the group is sent as part of the response
       }));
 
       // Clear password from local state after successful login
       setPassword('');
 
-      // Redirect based on user's group
-      if (data.user.groups[0] === 2) {
-        // If user belongs to 'Organization User' group (group ID 2), redirect to Create Organization page
-        router.push('/organization');
-      } else {
-        // Otherwise, redirect to Project List page
-        router.push('/project-list');
+      // Step 1: Route based on user group
+      const userGroup = data.user.groups[0]; // Assuming user has only 1 group
+      console.log('User group:', userGroup); // This should log a number
+
+      // Check if the group ID corresponds to Developer or Organization User
+      if (userGroup === 1) {
+        // If user is a Developer (group ID 1), route directly to the project list
+        router.push('/project');
+        return;
       }
+
+      if (userGroup === 2) {
+        // If user is an Organization User (group ID 2), route to the organization page
+        router.push('/organization');
+      }
+
     } catch (err) {
       console.error('Login error:', err);
       setError('An unexpected error occurred.');

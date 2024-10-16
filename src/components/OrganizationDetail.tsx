@@ -1,6 +1,6 @@
 'use client';
 
-import React , { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks'; // Redux hooks
 import { setOrganization } from '../store/organizationSlice'; // Redux action to set organization in store
 import { RootState } from '../store/store'; // RootState from Redux store
@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 // Props interface for OrganizationDetail component
 interface OrganizationDetailProps {
   organizationProp: {
-    id: number;
+    id: number | null;
     name: string;
     website: string;
     address: string;
@@ -24,7 +24,7 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organizationPro
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  // useEffect needed to prevent infinite loop of hydration?
+  // useEffect to hydrate Redux state once with the organization data
   useEffect(() => {
     dispatch(setOrganization(organizationProp));
   }, []);
@@ -37,7 +37,7 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organizationPro
   return (
     <main className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-3xl font-bold text-center mb-6">Organization Details</h1>
-      
+
       {/* Display User Information */}
       <div className="space-y-4">
         <h2 className="text-xl font-bold">User Information</h2>
@@ -64,3 +64,4 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organizationPro
 };
 
 export default OrganizationDetail;
+

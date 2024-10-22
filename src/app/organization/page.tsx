@@ -2,7 +2,6 @@
 
 import { cookies } from 'next/headers'; // To access cookies in App Router
 import { redirect } from 'next/navigation'; // For handling redirects
-import OrganizationDetail from '../../components/OrganizationDetail'; // Client component
 import CreateOrganization from '../../components/CreateOrganization'; // Client component
 
 export default async function OrganizationPage() {
@@ -14,6 +13,7 @@ export default async function OrganizationPage() {
     return null;
   }
 
+  // Fetch the user's organization
   const res = await fetch('http://localhost:8000/organizations/user/', {
     method: 'GET',
     headers: {
@@ -27,12 +27,11 @@ export default async function OrganizationPage() {
     organization = await res.json();
   }
 
-  // Render CreateOrganization if no organization exists
+  // If no organization exists, render CreateOrganization
   if (!organization) {
     return <CreateOrganization />;
   }
 
-  // Pass the organization data to the OrganizationDetail component
-  return <OrganizationDetail organizationProp={organization} />;
+  // If organization exists, redirect to the dynamic [id] route to show organization details
+  redirect(`/organization/${organization.id}`);
 }
-

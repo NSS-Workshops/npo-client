@@ -16,7 +16,7 @@ interface OrganizationDetailProps {
     address: string;
     city: string;
     state: string;
-    user: number | null;
+    user : number | null;
   };
 }
 
@@ -24,12 +24,12 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organizationPro
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  // useEffect to hydrate Redux state once with the organization data
+  // Hydrate organization state when component mounts
   useEffect(() => {
-    dispatch(setOrganization(organizationProp));
+    dispatch(setOrganization(organizationProp)); // Hydrate Redux organization state
   }, []);
 
-  // Access organization and user data from Redux
+  // Access organization and user from Redux state
   const organization = useAppSelector((state: RootState) => state.organization);
   const user = useAppSelector((state: RootState) => state.user);
 
@@ -55,13 +55,12 @@ const OrganizationDetail: React.FC<OrganizationDetailProps> = ({ organizationPro
         <p><strong>State:</strong> {organization.state}</p>
       </div>
 
-      {/* Button to navigate to project list */}
-      <Button onClick={() => router.push('/project')} className="mt-6 w-full py-3 bg-blue-600 text-white rounded-lg">
-        Go to Project List
+      {/* Button to navigate back or to project list */}
+      <Button onClick={() => router.push(`/organization/${organization.id}/project`)} className="mt-6 w-full py-3 bg-blue-600 text-white rounded-lg">
+        Go to Projects
       </Button>
     </main>
   );
 };
 
 export default OrganizationDetail;
-

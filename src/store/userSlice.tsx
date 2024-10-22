@@ -39,6 +39,7 @@ const userSlice = createSlice({
       state.group = action.payload.group;
       state.loggedIn = true;
     },
+    clearUser: () => initialState,  // Reset to initial state
 
     // Dynamically update individual fields
     updateUserField: (state, action: PayloadAction<{ field: keyof UserState; value: string }>) => {
@@ -59,5 +60,5 @@ const userSlice = createSlice({
 
 
 // Export actions and reducer
-export const { setUser, logout, updateUserField } = userSlice.actions;
+export const { setUser, logout, updateUserField, clearUser } = userSlice.actions;
 export default userSlice.reducer;

@@ -15,10 +15,11 @@ export default function RegisterPage() {
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
 
-    // Handle form submission
+    // Add console log to check if function is called
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        console.log('Register button clicked');
 
         try {
             // Prepare the user data to send to the backend for registration
@@ -30,6 +31,8 @@ export default function RegisterPage() {
                 password,  // Password is stored locally, not in Redux
                 groups: [user.group === 'Organization User' ? 2 : 1],  // Use IDs for groups
             };
+
+            console.log('Sending registration data:', userData);
 
             // Send the form data to your backend's register endpoint
             const response = await fetch('http://localhost:8000/users/', {
@@ -43,23 +46,15 @@ export default function RegisterPage() {
             if (!response.ok) {
                 const errorData = await response.json();
                 setError(errorData.message || 'Registration failed');
+                console.error('Registration failed:', errorData);
                 return;
             }
 
             const data = await response.json();
-
-            // Dispatch the setUser action to store the user data globally, including the id
-            dispatch(setUser({
-                id: data.id,  // Store the user id
-                username: data.username,
-                email: data.email,
-                first_name: data.first_name,
-                last_name: data.last_name,
-                group: data.groups[0],  // Store the selected group in Redux state
-            }));
+            console.log('Registration successful, data:', data);
 
             // Step 1: Automatically log the user in after registration
-            const registerResponse = await fetch('http://localhost:8000/users/login/', {
+            const loginResponse = await fetch('http://localhost:8000/users/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -70,26 +65,31 @@ export default function RegisterPage() {
                 }),
             });
 
-            if (!registerResponse.ok) {
-                const errorData = await registerResponse.json();
+            if (!loginResponse.ok) {
+                const errorData = await loginResponse.json();
                 setError(errorData.message || 'Login after registration failed');
+                console.error('Login after registration failed:', errorData);
                 return;
             }
 
-            const registerData = await registerResponse.json();
+            const loginData = await loginResponse.json();
+            console.log('Login successful:', loginData);
 
-            // Step 2: Update Redux state with registered user info, including the id
+            // Store the auth_token in cookies
+            document.cookie = `auth_token=${loginData.auth_token}; path=/; max-age=${60 * 60 * 24 * 30}; secure=false; SameSite=Lax;`;
+
+            // Step 2: Update Redux state with registered and logged-in user info
             dispatch(setUser({
-                id: registerData.user.id,  // Store user id
-                username: registerData.user.username,
-                email: registerData.user.email,
-                first_name: registerData.user.first_name,
-                last_name: registerData.user.last_name,
-                group: registerData.user.groups[0],  // Assuming single group
+                id: loginData.user.id,  // Store user id
+                username: loginData.user.username,
+                email: loginData.user.email,
+                first_name: loginData.user.first_name,
+                last_name: loginData.user.last_name,
+                group: loginData.user.groups[0],  // Assuming single group
             }));
 
-            // Step 3: Redirect based on group after registration
-            if (registerData.user.groups[0] === 2) {  // Organization User
+            // Step 3: Redirect based on group after successful login
+            if (loginData.user.groups[0] === 2) {  // Organization User
                 router.push('/organization');  // Redirect to create organization page
             } else {
                 router.push('/project-list');  // Redirect developers to dashboard
